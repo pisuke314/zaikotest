@@ -43,6 +43,21 @@ select{width:100%;font-size:17px;padding:12px;border-radius:12px;border:1px soli
 .spin{width:36px;height:36px;border:4px solid var(--line);border-top-color:var(--pri);border-radius:50%;margin:0 auto 14px;animation:sp 0.8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 details summary{color:var(--sub);font-size:14px;cursor:pointer}
+/* QRラベル印刷モード */
+body.lab{background:#f3f4f6;color:#111}
+.lbar{max-width:210mm;margin:0 auto;padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.lbar select{width:auto}
+.lbar select,.lbar button{font:inherit;font-size:15px;padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#111}
+.lbar button{background:#1d5fd1;color:#fff;border-color:#1d5fd1;font-weight:700}
+.lbar .note{font-size:13px;color:#555}
+.sheet{width:210mm;margin:0 auto 16px;background:#fff;padding:10mm 8mm;display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}
+.lab1{border:1px dashed #999;border-radius:3mm;padding:4mm 3mm;text-align:center;break-inside:avoid;page-break-inside:avoid;height:62mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;color:#111}
+.lab1 .nm{font-weight:800;font-size:13pt;line-height:1.2;max-height:2.4em;overflow:hidden}
+.lab1 .qr{width:32mm;height:32mm}
+.lab1 .qr img,.lab1 .qr canvas{width:32mm!important;height:32mm!important}
+.lab1 .loc{font-size:10pt;font-weight:700;background:#eee;border-radius:2mm;padding:1mm 3mm}
+.lab1 .pt{font-size:9pt;color:#333}
+@media print{ body.lab{background:#fff} .lbar,#err{display:none!important} .sheet{margin:0;padding:6mm;width:auto} @page{size:A4;margin:6mm} }
 </style>
 </head>
 <body>
@@ -50,6 +65,7 @@ details summary{color:var(--sub);font-size:14px;cursor:pointer}
   <div id="err" class="err"></div>
 
   <div id="loading" class="center"><div class="spin"></div>読み込み中…</div>
+  <div id="labels" class="hide"></div>
 
   <div id="keyBox" class="card hide">
     <p class="lbl">合言葉を入力してください（最初の1回だけ）</p>
@@ -124,8 +140,9 @@ details summary{color:var(--sub);font-size:14px;cursor:pointer}
 <div class="toast" id="toast"></div>
 
 <script>
-
+/* ===== 設定：ここだけ書き換えてください ===== */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzAdb0Bwur_7pBywLhZPS6JU7IlRnC2ZUIbldQMAxImPyk-BoKWuUn9j13a3nXCnhKwaA/exec';
+/* ============================================ */
 
 var LABEL = {'持ち出し':'持ち出す数','移動':'移動する数','入荷':'入荷した数','棚卸し':'今ここにある数（数えた数）'};
 var HINT = {'持ち出し':'','移動':'この場所から減り、移動先に増えます','入荷':'入荷は必ず記録してください','棚卸し':'記録された在庫ではなく、実際に数えた数を入れてください'};
@@ -169,7 +186,9 @@ function boot(){
     D=data;
     var l=Q.get('l')||'';
     S.loc = /^\d+$/.test(l) ? (D.locations[Number(l)-1]||'') : l;
-    show('loading', false); show('form', true);
+    show('loading', false);
+    if (Q.get('mode')==='labels'){ labels(); return; }
+    show('form', true);
     if (!ready){ init(); ready=true; } else { render(); }
   }).catch(function(e){
     show('loading', false);
@@ -283,6 +302,46 @@ function undo(){
 
 $('keyGo').onclick=function(){ var v=$('keyIn').value.trim(); if(!v) return; store('inv_key', v); boot(); };
 $('retry').onclick=boot;
+/* ===== QRラベル印刷モード（URLの末尾に ?mode=labels） ===== */
+function labels(){
+  document.body.classList.add('lab');
+  document.querySelector('.wrap').style.maxWidth='none';
+  var box=$('labels'); box.classList.remove('hide'); box.innerHTML='';
+  var bar=document.createElement('div'); bar.className='lbar'; box.appendChild(bar);
+  var sel=document.createElement('select'); opt(sel,'','すべての場所'); D.locations.forEach(function(l){ opt(sel,l,l); });
+  bar.appendChild(sel);
+  var pb=document.createElement('button'); pb.textContent='印刷する'; pb.onclick=function(){ window.print(); }; bar.appendChild(pb);
+  var nt=document.createElement('span'); nt.className='note'; nt.textContent='切り取って各保管場所の棚に貼ってください（A4・3列）'; bar.appendChild(nt);
+  var area=document.createElement('div'); box.appendChild(area);
+  var base=location.origin+location.pathname;
+  function draw(){
+    area.innerHTML='';
+    var sheet=document.createElement('div'); sheet.className='sheet'; area.appendChild(sheet);
+    var n=0;
+    D.locations.forEach(function(loc, li){
+      if (sel.value && sel.value!==loc) return;
+      D.products.forEach(function(p){
+        if (p.places.indexOf(loc)<0) return;
+        n++;
+        var d=document.createElement('div'); d.className='lab1';
+        var nm=document.createElement('div'); nm.className='nm'; nm.textContent=p.name;
+        var qr=document.createElement('div'); qr.className='qr';
+        var lc=document.createElement('div'); lc.className='loc'; lc.textContent='📍 '+loc;
+        var pt=document.createElement('div'); pt.className='pt'; pt.textContent=(p.point!==''&&p.point!=null?'発注点 '+p.point+p.unit+'　':'')+p.id;
+        d.appendChild(nm); d.appendChild(qr); d.appendChild(lc); d.appendChild(pt); sheet.appendChild(d);
+        new QRCode(qr,{text:base+'?p='+encodeURIComponent(p.id)+'&l='+(li+1),width:256,height:256,correctLevel:QRCode.CorrectLevel.M});
+      });
+    });
+    if (!n) area.innerHTML='<div class="center">ラベルにする製品がありません。製品マスタの「置き場所」を確認してください。</div>';
+  }
+  sel.onchange=draw;
+  var sc=document.createElement('script');
+  sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+  sc.onload=draw;
+  sc.onerror=function(){ showErr('QRコードの部品を読み込めませんでした。通信状態を確認して再読み込みしてください'); };
+  document.head.appendChild(sc);
+}
+
 boot();
 </script>
 </body>
