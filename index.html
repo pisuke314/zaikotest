@@ -6,137 +6,169 @@
 <meta name="robots" content="noindex, nofollow">
 <title>在庫記録</title>
 <style>
-:root{--bg:#f3f4f6;--card:#fff;--ink:#16191d;--sub:#5f6b78;--line:#dde1e7;--pri:#1d5fd1;--priInk:#fff;--soft:#eaf1fd;--ok:#17803a;--bad:#c42b2b;--chip:#eef1f5}
-@media (prefers-color-scheme: dark){:root{--bg:#111315;--card:#1b1e22;--ink:#e9ebee;--sub:#9aa4af;--line:#2d3238;--pri:#5b93ff;--priInk:#0b1220;--soft:#1d2a40;--ok:#4cc27a;--bad:#ff6b6b;--chip:#252a30}}
+:root{--bg:#f3f4f6;--card:#fff;--ink:#16191d;--sub:#5f6b78;--line:#dde1e7;--pri:#1d5fd1;--priInk:#fff;--soft:#eaf1fd;--ok:#17803a;--bad:#c42b2b;--chip:#eef1f5;--sel:#e7f0ff}
+@media (prefers-color-scheme: dark){:root{--bg:#111315;--card:#1b1e22;--ink:#e9ebee;--sub:#9aa4af;--line:#2d3238;--pri:#5b93ff;--priInk:#0b1220;--soft:#1d2a40;--ok:#4cc27a;--bad:#ff6b6b;--chip:#252a30;--sel:#1d2a40}}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP","Yu Gothic UI",sans-serif;font-size:16px;line-height:1.45}
-.wrap{max-width:480px;margin:0 auto;padding:14px 14px 28px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
-.lbl{font-size:13px;color:var(--sub);margin:0 0 8px;font-weight:600}
-h1{font-size:24px;margin:2px 0 8px;line-height:1.25}
-.chip{display:inline-block;background:var(--chip);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600}
-.stock{display:flex;gap:10px;margin-top:12px}
-.stock div{flex:1;background:var(--chip);border-radius:12px;padding:8px 12px}
-.stock small{display:block;font-size:12px;color:var(--sub)}
-.stock b{font-size:22px}
-select{width:100%;font-size:17px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);appearance:none;-webkit-appearance:none}
+.wrap{max-width:520px;margin:0 auto;padding:14px 14px 120px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.lbl{font-size:13px;color:var(--sub);margin:0 0 8px;font-weight:700}
+h1{font-size:22px;margin:0;line-height:1.25}
+.hint{font-size:13px;color:var(--sub);margin-top:6px}
+.row{display:flex;align-items:center;gap:10px}
+.grow{flex:1;min-width:0}
+select,input[type=search],input[type=text]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+select{appearance:none;-webkit-appearance:none}
+button{font:inherit;color:inherit}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px}
 .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.seg button,.dest button,.quick button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:12px 4px;font-weight:700;font-size:15px}
-.seg button.on,.dest button.on{background:var(--pri);border-color:var(--pri);color:var(--priInk)}
-.dest{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
-.qty{display:flex;align-items:center;gap:10px}
-.qty button{width:64px;height:64px;border-radius:16px;border:1px solid var(--line);background:var(--chip);color:var(--ink);font-size:30px;font-weight:700}
-.qty input{flex:1;min-width:0;height:64px;text-align:center;font-size:34px;font-weight:800;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink)}
-.unit{font-size:15px;color:var(--sub);min-width:28px}
-.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
-.go{width:100%;font:inherit;font-size:19px;font-weight:800;padding:18px;border:0;border-radius:16px;background:var(--pri);color:var(--priInk);margin-top:4px}
-.go:disabled{opacity:.5}
-.sub{width:100%;font:inherit;font-size:16px;font-weight:700;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);margin-top:8px}
-.hint{font-size:13px;color:var(--sub);margin-top:8px}
-.memo{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
-.done{text-align:center;padding:28px 16px}
-.check{width:72px;height:72px;border-radius:50%;background:var(--ok);color:#fff;font-size:40px;line-height:72px;margin:0 auto 12px;font-weight:800}
-.err{display:none;background:var(--bad);color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-weight:600}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;display:none}
-.hide{display:none}
+.seg button,.grid2 button{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 4px;font-weight:700;font-size:15px}
+.seg button.on,.grid2 button.on,.chips button.on{background:var(--pri);border-color:var(--pri);color:var(--priInk)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px;margin-top:10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:14px;font-weight:700;white-space:nowrap}
+.sec{font-size:12px;color:var(--sub);font-weight:700;margin:14px 2px 6px}
+.item{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:8px 8px 8px 12px;margin-bottom:6px;background:var(--card)}
+.item.on{background:var(--sel);border-color:var(--pri)}
+.item .nm{flex:1;min-width:0;padding:6px 0;cursor:pointer}
+.item .nm b{display:block;font-size:16px;line-height:1.3}
+.item .nm small{font-size:12px;color:var(--sub)}
+.step{display:flex;align-items:center;gap:4px}
+.step button{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-size:22px;font-weight:800;line-height:1}
+.step input{width:52px;height:42px;text-align:center;font-size:19px;font-weight:800;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);padding:0}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+.bar .in{max-width:520px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.bar .sum{font-size:13px;color:var(--sub);min-width:84px}
+.bar .sum b{display:block;font-size:17px;color:var(--ink)}
+.go{flex:1;border:0;border-radius:14px;background:var(--pri);color:var(--priInk);font-size:17px;font-weight:800;padding:15px 10px}
+.go:disabled{opacity:.45}
+.sub2{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--card);font-size:16px;font-weight:700;padding:13px;margin-top:8px}
+.err{display:none;background:var(--bad);color:#fff;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;display:none;z-index:5}
+.hide{display:none!important}
 .center{text-align:center;padding:40px 16px;color:var(--sub)}
-.spin{width:36px;height:36px;border:4px solid var(--line);border-top-color:var(--pri);border-radius:50%;margin:0 auto 14px;animation:sp 0.8s linear infinite}
+.spin{width:36px;height:36px;border:4px solid var(--line);border-top-color:var(--pri);border-radius:50%;margin:0 auto 14px;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-details summary{color:var(--sub);font-size:14px;cursor:pointer}
-/* QRラベル印刷モード */
+.check{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;font-size:36px;line-height:64px;margin:4px auto 10px;font-weight:800;text-align:center}
+.dl{list-style:none;margin:10px 0 0;padding:0}
+.dl li{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-top:1px solid var(--line);font-size:15px}
+.dl li span:last-child{color:var(--sub);white-space:nowrap}
+.empty{color:var(--sub);text-align:center;padding:18px 0;font-size:14px}
+.top{display:flex;justify-content:space-between;align-items:center;margin:0 2px 10px}
+.top a{color:var(--pri);font-weight:700;font-size:14px;text-decoration:none}
+/* 在庫一覧（閲覧） */
+.sc{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;background:var(--card)}
+.sc .h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sc .h b{font-size:16px}
+.tag{display:inline-block;font-size:11px;font-weight:700;background:var(--chip);color:var(--sub);border-radius:999px;padding:2px 8px;margin-top:3px}
+.tot{text-align:right;white-space:nowrap}
+.tot b{font-size:22px}
+.locs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.locs span{font-size:13px;background:var(--chip);border-radius:8px;padding:3px 8px}
+.locs span.hl{background:var(--pri);color:var(--priInk);font-weight:700}
+.locs span.zero{opacity:.55}
+/* QRラベル印刷 */
 body.lab{background:#f3f4f6;color:#111}
 .lbar{max-width:210mm;margin:0 auto;padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.lbar select{width:auto}
-.lbar select,.lbar button{font:inherit;font-size:15px;padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#fff;color:#111}
-.lbar button{background:#1d5fd1;color:#fff;border-color:#1d5fd1;font-weight:700}
+.lbar button{font-size:15px;padding:9px 14px;border-radius:8px;border:1px solid #1d5fd1;background:#1d5fd1;color:#fff;font-weight:700}
 .lbar .note{font-size:13px;color:#555}
-.sheet{width:210mm;margin:0 auto 16px;background:#fff;padding:10mm 8mm;display:grid;grid-template-columns:repeat(3,1fr);gap:4mm}
-.lab1{border:1px dashed #999;border-radius:3mm;padding:4mm 3mm;text-align:center;break-inside:avoid;page-break-inside:avoid;height:62mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;color:#111}
-.lab1 .nm{font-weight:800;font-size:13pt;line-height:1.2;max-height:2.4em;overflow:hidden}
-.lab1 .qr{width:32mm;height:32mm}
-.lab1 .qr img,.lab1 .qr canvas{width:32mm!important;height:32mm!important}
-.lab1 .loc{font-size:10pt;font-weight:700;background:#eee;border-radius:2mm;padding:1mm 3mm}
-.lab1 .pt{font-size:9pt;color:#333}
+.sheet{width:210mm;margin:0 auto 16px;background:#fff;padding:10mm;display:grid;grid-template-columns:1fr 1fr;gap:8mm}
+.lab1{border:1px dashed #999;border-radius:4mm;padding:7mm 5mm;text-align:center;break-inside:avoid;page-break-inside:avoid;height:125mm;display:flex;flex-direction:column;align-items:center;justify-content:space-between;color:#111}
+.lab1 .t{font-size:12pt;font-weight:700;color:#444}
+.lab1 .loc{font-size:24pt;font-weight:900;line-height:1.2}
+.lab1 .qr{width:62mm;height:62mm}
+.lab1 .qr img,.lab1 .qr canvas{width:62mm!important;height:62mm!important}
+.lab1 .pt{font-size:10pt;color:#333;line-height:1.5;white-space:pre-line}
 @media print{ body.lab{background:#fff} .lbar,#err{display:none!important} .sheet{margin:0;padding:6mm;width:auto} @page{size:A4;margin:6mm} }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap" id="wrap">
   <div id="err" class="err"></div>
-
   <div id="loading" class="center"><div class="spin"></div>読み込み中…</div>
-  <div id="labels" class="hide"></div>
 
   <div id="keyBox" class="card hide">
     <p class="lbl">合言葉を入力してください（最初の1回だけ）</p>
-    <input id="keyIn" class="memo" style="font-size:18px;padding:12px" autocomplete="off">
-    <button class="go" id="keyGo" style="margin-top:12px">決定</button>
+    <input id="keyIn" type="text" autocomplete="off" style="font-size:18px">
+    <button class="go" id="keyGo" style="width:100%;margin-top:12px">決定</button>
   </div>
+  <div id="retryBox" class="hide" style="text-align:center"><button class="go" id="retry" style="width:100%">もう一度読み込む</button></div>
 
-  <div id="retryBox" class="hide" style="text-align:center">
-    <button class="go" id="retry">もう一度読み込む</button>
-  </div>
+  <!-- ===== 記録画面 ===== -->
+  <div id="rec" class="hide">
+    <div class="top"><span class="lbl" style="margin:0">在庫の記録</span><a id="toStock" href="#">在庫を見る ›</a></div>
 
-  <div id="form" class="hide">
-    <div id="pickers" class="card hide">
-      <p class="lbl">製品</p>
-      <select id="selProd"></select>
-      <p class="lbl" style="margin-top:12px">保管場所</p>
-      <select id="selLoc"></select>
+    <div class="card" id="locPick">
+      <p class="lbl">どこの在庫を記録しますか？</p>
+      <div class="grid2" id="locBtns"></div>
+      <p class="hint">その場で記録しそこねた分を後から記録するときは、<b>実際に持ち出した（入荷・移動した）場所</b>を選んでください。</p>
     </div>
 
-    <div class="card" id="head">
-      <span class="chip" id="locChip"></span>
-      <h1 id="pName"></h1>
-      <div class="stock">
-        <div><small>この場所の在庫</small><b id="stLoc">-</b> <span class="u"></span></div>
-        <div><small>全体の在庫</small><b id="stAll">-</b> <span class="u"></span></div>
+    <div class="card hide" id="locHead">
+      <div class="row">
+        <div class="grow"><span class="lbl" style="margin:0">保管場所</span><h1 id="locName"></h1></div>
+        <button class="btn" id="chgLoc">場所を変更</button>
       </div>
     </div>
 
-    <div class="card">
-      <p class="lbl">記録する人</p>
-      <select id="selStaff"></select>
-    </div>
+    <div id="recBody" class="hide">
+      <div class="card">
+        <p class="lbl">記録する人</p>
+        <select id="selStaff"></select>
+      </div>
 
-    <div class="card">
-      <p class="lbl">何をしますか</p>
-      <div class="seg" id="seg"></div>
-      <div id="destBox" class="hide" style="margin-top:14px">
-        <p class="lbl">移動先</p>
-        <div class="dest" id="dest"></div>
+      <div class="card">
+        <p class="lbl">何をしますか</p>
+        <div class="seg" id="seg"></div>
+        <div id="destBox" class="hide" style="margin-top:12px">
+          <p class="lbl">移動先</p>
+          <div class="grid2" id="dest"></div>
+        </div>
+        <p class="hint" id="typeHint"></p>
+      </div>
+
+      <div class="card">
+        <p class="lbl" id="listLbl">製品をタップ（1回で1個ずつ増えます）</p>
+        <input type="search" id="q" placeholder="製品名で検索">
+        <div class="chips" id="cats"></div>
+        <div id="list"></div>
+        <details style="margin-top:10px"><summary class="hint" style="cursor:pointer">メモを残す（任意）</summary>
+          <input type="text" id="memo" maxlength="200" placeholder="例：〇〇現場用" style="margin-top:8px">
+        </details>
       </div>
     </div>
-
-    <div class="card">
-      <p class="lbl" id="qtyLbl">持ち出す数</p>
-      <div class="qty">
-        <button type="button" id="minus" aria-label="減らす">−</button>
-        <input id="qty" type="number" inputmode="numeric" min="0" value="1">
-        <button type="button" id="plus" aria-label="増やす">＋</button>
-      </div>
-      <div class="quick" id="quick"></div>
-      <div class="hint" id="qtyHint"></div>
-      <details style="margin-top:12px"><summary>メモを残す（任意）</summary>
-        <input id="memo" class="memo" style="margin-top:8px" maxlength="200" placeholder="例：〇〇現場用">
-      </details>
-    </div>
-
-    <button class="go" id="go">記録する</button>
   </div>
 
-  <div id="doneView" class="card done hide">
+  <!-- ===== 記録完了 ===== -->
+  <div id="done" class="card hide">
     <div class="check">✓</div>
-    <h1 style="font-size:22px">記録しました</h1>
-    <p id="doneMsg" style="color:var(--sub);margin:4px 0 14px"></p>
-    <div class="stock" style="text-align:left">
-      <div><small>この場所の在庫</small><b id="dLoc">-</b> <span class="u"></span></div>
-      <div><small>全体の在庫</small><b id="dAll">-</b> <span class="u"></span></div>
-    </div>
-    <button class="go" id="again" style="margin-top:18px">続けて記録する</button>
-    <button class="sub" id="undo">間違えたので取り消す</button>
+    <h1 style="text-align:center;font-size:21px">記録しました</h1>
+    <p class="hint" style="text-align:center" id="doneSub"></p>
+    <ul class="dl" id="doneList"></ul>
+    <button class="go" id="again" style="width:100%;margin-top:14px">続けて記録する</button>
+    <button class="sub2" id="undo">間違えたので取り消す</button>
   </div>
+
+  <!-- ===== 在庫一覧（閲覧） ===== -->
+  <div id="stock" class="hide">
+    <div class="top"><span class="lbl" style="margin:0">在庫一覧（閲覧のみ）</span><a id="toRec" href="#">記録する ›</a></div>
+    <div class="card">
+      <input type="search" id="sq" placeholder="製品名で検索">
+      <div class="chips" id="scats"></div>
+      <select id="sloc" style="margin-top:6px"></select>
+      <p class="hint" id="supd"></p>
+    </div>
+    <div id="slist"></div>
+  </div>
+
+  <div id="labels" class="hide"></div>
 </div>
+
+<div class="bar hide" id="bar"><div class="in">
+  <div class="sum" id="sum"><b>0品目</b>未選択</div>
+  <button class="go" id="go" disabled>記録する</button>
+</div></div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -144,26 +176,32 @@ body.lab{background:#f3f4f6;color:#111}
 var API_URL = 'https://script.google.com/macros/s/AKfycbzAdb0Bwur_7pBywLhZPS6JU7IlRnC2ZUIbldQMAxImPyk-BoKWuUn9j13a3nXCnhKwaA/exec';
 /* ============================================ */
 
-var LABEL = {'持ち出し':'持ち出す数','移動':'移動する数','入荷':'入荷した数','棚卸し':'今ここにある数（数えた数）'};
-var HINT = {'持ち出し':'','移動':'この場所から減り、移動先に増えます','入荷':'入荷は必ず記録してください','棚卸し':'記録された在庫ではなく、実際に数えた数を入れてください'};
+var TYPES = ['持ち出し','移動','入荷','棚卸し'];
+var HINT = {
+  '持ち出し':'',
+  '移動':'この場所から減り、移動先に増えます',
+  '入荷':'入荷は必ず記録してください',
+  '棚卸し':'タップした製品に、実際に数えた数を入れてください（記録上の数ではなく実物の数）'
+};
 var Q = new URLSearchParams(location.search);
-var D = null;
-var S = {pid:Q.get('p')||'', loc:'', type:'持ち出し', dest:'', lastId:null};
-var ready = false;
+var MODE = Q.get('mode') || 'rec';
+var D = null, ready = false;
+var S = {loc:'', type:'持ち出し', dest:'', cat:'', q:'', sel:{}, lastId:null, lastItems:null};
 
 function $(id){ return document.getElementById(id); }
-function prod(){ for (var i=0;i<D.products.length;i++){ if (D.products[i].id===S.pid) return D.products[i]; } return null; }
-function stockAt(loc){ var s=D.stock[S.pid]||{}; return s[loc]||0; }
-function stockAll(){ var s=D.stock[S.pid]||{}, t=0; for (var k in s) t+=Number(s[k])||0; return t; }
+function el(tag, cls, text){ var e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; }
+function show(id, on){ $(id).classList.toggle('hide', !on); }
 function store(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 function load(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
-function opt(sel, val, text){ var o=document.createElement('option'); o.value=val; o.textContent=text; sel.appendChild(o); }
-function btn(parent, text, cls, fn){ var b=document.createElement('button'); b.type='button'; b.textContent=text; if(cls) b.className=cls; b.onclick=fn; parent.appendChild(b); return b; }
-function showErr(m){ var e=$('err'); e.textContent=m; e.style.display=m?'block':'none'; if(m) window.scrollTo(0,0); }
+function showErr(m){ var e=$('err'); e.textContent=m||''; e.style.display=m?'block':'none'; if(m) window.scrollTo(0,0); }
 function toast(m){ var t=$('toast'); t.textContent=m; t.style.display='block'; setTimeout(function(){ t.style.display='none'; }, 2200); }
-function show(id, on){ $(id).classList.toggle('hide', !on); }
+function prodById(id){ for (var i=0;i<D.products.length;i++) if (D.products[i].id===id) return D.products[i]; return null; }
+function stockAt(pid, loc){ var s=D.stock[pid]||{}; return Number(s[loc])||0; }
+function stockAll(pid){ var s=D.stock[pid]||{}, t=0; for (var k in s) t+=Number(s[k])||0; return t; }
+function linkTo(params){ var u=location.pathname; var q=new URLSearchParams(params).toString(); return q ? u+'?'+q : u; }
+function locNo(loc){ return String(D.locations.indexOf(loc)+1); }
 
-/* スプレッドシートとのやり取り（Googleのログイン情報は使いません） */
+/* ---------- スプレッドシートとのやり取り（Googleのログイン情報は使いません） ---------- */
 function api(action, extra){
   var body = {action:action, key:load('inv_key')||''};
   for (var k in (extra||{})) body[k]=extra[k];
@@ -178,18 +216,16 @@ function api(action, extra){
 }
 
 function boot(){
-  showErr(''); show('loading', true); show('retryBox', false); show('keyBox', false); show('form', false);
+  showErr(''); show('loading', true); show('retryBox', false); show('keyBox', false);
   if (!/^https:\/\/script\.google\.com\/.+\/exec$/.test(API_URL)){
     show('loading', false); showErr('設定エラー：index.html の API_URL にウェブアプリのURL（末尾 /exec）を貼り付けてください'); return;
   }
   api('init').then(function(data){
-    D=data;
-    var l=Q.get('l')||'';
-    S.loc = /^\d+$/.test(l) ? (D.locations[Number(l)-1]||'') : l;
+    D=data; D.loadedAt=new Date();
     show('loading', false);
-    if (Q.get('mode')==='labels'){ labels(); return; }
-    show('form', true);
-    if (!ready){ init(); ready=true; } else { render(); }
+    if (MODE==='labels') return labels();
+    if (MODE==='stock') return stockView();
+    recView();
   }).catch(function(e){
     show('loading', false);
     if (e.needKey){ show('keyBox', true); if (load('inv_key')) showErr('合言葉が違います'); return; }
@@ -197,144 +233,301 @@ function boot(){
   });
 }
 
-function init(){
-  var ss=$('selStaff'); opt(ss,'','名前を選んでください');
-  D.staff.forEach(function(n){ opt(ss,n,n); });
-  var saved=load('inv_staff'); if (saved && D.staff.indexOf(saved)>=0) ss.value=saved;
-  ss.onchange=function(){ store('inv_staff', ss.value); };
-
-  var validP = !!prod(), validL = D.locations.indexOf(S.loc)>=0;
-  if (!validP || !validL){
-    show('pickers', true);
-    var sp=$('selProd'); opt(sp,'','製品を選んでください');
-    D.products.forEach(function(p){ opt(sp,p.id,p.name+'（'+p.id+'）'); });
-    var sl=$('selLoc'); D.locations.forEach(function(l){ opt(sl,l,l); });
-    if (validP) sp.value=S.pid; else S.pid='';
-    if (!validL){ var sv=load('inv_loc'); S.loc = sv && D.locations.indexOf(sv)>=0 ? sv : D.locations[0]; }
-    sl.value=S.loc;
-    sp.onchange=function(){ S.pid=sp.value; render(); };
-    sl.onchange=function(){ S.loc=sl.value; store('inv_loc',S.loc); S.dest=''; render(); };
+/* =============================== 記録画面 =============================== */
+function recView(){
+  show('rec', true);
+  if (!ready){
+    ready=true;
+    var l=Q.get('l')||'';
+    S.loc = /^\d+$/.test(l) ? (D.locations[Number(l)-1]||'') : (D.locations.indexOf(l)>=0 ? l : '');
+    var ss=$('selStaff'); ss.innerHTML='';
+    var o=el('option',null,'名前を選んでください'); o.value=''; ss.appendChild(o);
+    D.staff.forEach(function(n){ var x=el('option',null,n); x.value=n; ss.appendChild(x); });
+    var sv=load('inv_staff'); if (sv && D.staff.indexOf(sv)>=0) ss.value=sv;
+    ss.onchange=function(){ store('inv_staff', ss.value); };
+    TYPES.forEach(function(t){ var b=el('button',null,t); b.type='button'; b.onclick=function(){ setType(t); }; $('seg').appendChild(b); });
+    D.locations.forEach(function(loc){ var b=el('button',null,loc); b.type='button'; b.onclick=function(){ setLoc(loc); }; $('locBtns').appendChild(b); });
+    $('chgLoc').onclick=function(){ setLoc(''); };
+    $('q').oninput=function(){ S.q=this.value.trim(); renderList(); };
+    $('go').onclick=submit;
+    $('again').onclick=function(){ show('done', false); show('rec', true); S.sel={}; renderAll(); window.scrollTo(0,0); };
+    $('undo').onclick=undo;
+    // 旧形式のQR（製品＋場所）で来た場合は、その製品を1個選んだ状態にする
+    var p=Q.get('p'); if (p && prodById(p) && S.loc) S.sel[p]=1;
   }
-  ['持ち出し','移動','入荷','棚卸し'].forEach(function(t){ btn($('seg'), t, '', function(){ setType(t); }); });
-  [1,2,3,5,10].forEach(function(n){ btn($('quick'), String(n), '', function(){ $('qty').value=n; }); });
-  $('minus').onclick=function(){ $('qty').value=Math.max(0,(parseInt($('qty').value,10)||0)-1); };
-  $('plus').onclick=function(){ $('qty').value=(parseInt($('qty').value,10)||0)+1; };
-  $('go').onclick=submit;
-  $('again').onclick=function(){ show('doneView', false); show('form', true); setType('持ち出し'); window.scrollTo(0,0); };
-  $('undo').onclick=undo;
-  render();
+  renderAll();
+}
+
+function setLoc(loc){
+  if (loc!==S.loc){ S.sel={}; S.dest=''; S.cat=''; S.q=''; $('q').value=''; }
+  S.loc=loc;
+  renderAll(); window.scrollTo(0,0);
 }
 
 function setType(t){
-  S.type=t; S.dest='';
-  var p=prod();
-  if (t==='棚卸し') $('qty').value=stockAt(S.loc);
-  else if (t==='入荷' && p && p.orderQty) $('qty').value=p.orderQty;
-  else $('qty').value=1;
-  render();
+  if (t!==S.type){
+    // 棚卸しとそれ以外では数の意味が違うので、選択をリセット
+    if (t==='棚卸し' || S.type==='棚卸し') S.sel={};
+    S.type=t; S.dest='';
+  }
+  renderAll();
 }
 
-function render(){
-  var p=prod();
-  $('head').style.display = p ? '' : 'none';
-  if (p){
-    $('pName').textContent=p.name;
-    $('locChip').textContent='📍 '+S.loc;
-    $('stLoc').textContent=stockAt(S.loc);
-    $('stAll').textContent=stockAll();
-    Array.prototype.forEach.call(document.querySelectorAll('.u'), function(e){ e.textContent=p.unit; });
-  }
+function renderAll(){
+  var has=!!S.loc;
+  show('locPick', !has); show('locHead', has); show('recBody', has); show('bar', has);
+  $('toStock').href = linkTo(has ? {mode:'stock', l:locNo(S.loc)} : {mode:'stock'});
+  if (!has) return;
+  $('locName').textContent='📍 '+S.loc;
   Array.prototype.forEach.call($('seg').children, function(b){ b.classList.toggle('on', b.textContent===S.type); });
   show('destBox', S.type==='移動');
   var d=$('dest'); d.innerHTML='';
-  if (S.type==='移動'){
-    D.locations.filter(function(l){ return l!==S.loc; }).forEach(function(l){
-      btn(d, l, S.dest===l?'on':'', function(){ S.dest=l; render(); });
-    });
+  if (S.type==='移動') D.locations.forEach(function(l){
+    if (l===S.loc) return;
+    var b=el('button', S.dest===l?'on':'', l); b.type='button'; b.onclick=function(){ S.dest=l; renderAll(); }; d.appendChild(b);
+  });
+  $('typeHint').textContent=HINT[S.type];
+  $('listLbl').textContent = S.type==='棚卸し' ? '数えた製品をタップして、実際の数を入れてください' : '製品をタップ（1回で1個ずつ増えます）';
+  renderCats(); renderList(); renderBar();
+}
+
+function placedProducts(){
+  return D.products.filter(function(p){ return p.places.indexOf(S.loc)>=0; });
+}
+
+function renderCats(){
+  var box=$('cats'); box.innerHTML='';
+  var list=placedProducts();
+  var cats=(D.categories||[]).filter(function(c){ return list.some(function(p){ return p.category===c; }); });
+  list.forEach(function(p){ if (p.category && cats.indexOf(p.category)<0) cats.push(p.category); });
+  if (list.some(function(p){ return !p.category; })) cats.push('（分類なし）');
+  if (cats.length<2){ box.style.display='none'; return; }
+  box.style.display='';
+  [''].concat(cats).forEach(function(c){
+    var b=el('button', S.cat===c?'on':'', c||'すべて'); b.type='button';
+    b.onclick=function(){ S.cat=c; renderCats(); renderList(); };
+    box.appendChild(b);
+  });
+}
+
+function usageKey(){ return 'inv_use_'+S.loc; }
+function usage(){ try{ return JSON.parse(load(usageKey())||'{}'); }catch(e){ return {}; } }
+
+function sortProducts(list){
+  var catOrder=D.categories||[];
+  return list.sort(function(a,b){
+    var ca=catOrder.indexOf(a.category), cb=catOrder.indexOf(b.category);
+    if (ca<0) ca=999; if (cb<0) cb=999;
+    return ca-cb || a.name.localeCompare(b.name,'ja');
+  });
+}
+
+function renderList(){
+  var box=$('list'); box.innerHTML='';
+  var q=S.q.toLowerCase();
+  var all=placedProducts();
+  if (!all.length){ box.appendChild(el('div','empty','この場所に登録された製品がありません（製品マスタの置き場所を確認してください）')); return; }
+  var list=sortProducts(all.filter(function(p){
+    if (S.cat==='（分類なし）' && p.category) return false;
+    if (S.cat && S.cat!=='（分類なし）' && p.category!==S.cat) return false;
+    if (q && p.name.toLowerCase().indexOf(q)<0 && p.id.toLowerCase().indexOf(q)<0) return false;
+    return true;
+  }));
+  if (!list.length){ box.appendChild(el('div','empty','該当する製品がありません')); return; }
+  // よく使う製品（このスマホでこの場所の記録回数が多いもの）を上に
+  var u=usage();
+  var fav = (!q && !S.cat) ? list.filter(function(p){ return u[p.id]>0; })
+              .sort(function(a,b){ return u[b.id]-u[a.id]; }).slice(0,5) : [];
+  if (fav.length){
+    box.appendChild(el('div','sec','よく使う製品'));
+    fav.forEach(function(p){ box.appendChild(itemRow(p)); });
+    box.appendChild(el('div','sec','すべての製品'));
   }
-  $('qtyLbl').textContent=LABEL[S.type];
-  $('qtyHint').textContent=HINT[S.type];
-  $('quick').style.display = S.type==='棚卸し' ? 'none' : '';
-  $('go').textContent = S.type + 'を記録する';
+  list.forEach(function(p){ box.appendChild(itemRow(p)); });
+}
+
+function itemRow(p){
+  var on = S.sel[p.id]!=null;
+  var r=el('div','item'+(on?' on':''));
+  var nm=el('div','nm');
+  nm.appendChild(el('b',null,p.name));
+  nm.appendChild(el('small',null,(p.category?p.category+'・':'')+'在庫 '+stockAt(p.id,S.loc)+p.unit));
+  nm.onclick=function(){ bump(p, +1); };
+  r.appendChild(nm);
+  if (on){
+    var st=el('div','step');
+    var mi=el('button',null,'−'); mi.type='button'; mi.setAttribute('aria-label','減らす');
+    mi.onclick=function(){ bump(p, -1); };
+    var inp=el('input'); inp.type='number'; inp.inputMode='numeric'; inp.min='0'; inp.value=S.sel[p.id];
+    inp.onchange=function(){
+      var v=parseInt(inp.value,10); if (isNaN(v)||v<0) v=0;
+      if (v===0 && S.type!=='棚卸し') delete S.sel[p.id]; else S.sel[p.id]=v;
+      renderList(); renderBar();
+    };
+    var pl=el('button',null,'＋'); pl.type='button'; pl.setAttribute('aria-label','増やす');
+    pl.onclick=function(){ bump(p, +1); };
+    st.appendChild(mi); st.appendChild(inp); st.appendChild(pl);
+    r.appendChild(st);
+  }
+  return r;
+}
+
+function bump(p, d){
+  var cur=S.sel[p.id];
+  if (cur==null){
+    if (d<0) return;
+    S.sel[p.id] = S.type==='棚卸し' ? stockAt(p.id,S.loc) : 1;   // 棚卸しは記録上の数から調整する
+  } else if (d<0 && cur===0){
+    delete S.sel[p.id];                                           // 棚卸しで0からさらに−→選択解除
+  } else {
+    var v=Math.max(0, cur+d);
+    if (v===0 && S.type!=='棚卸し') delete S.sel[p.id]; else S.sel[p.id]=v;
+  }
+  renderList(); renderBar();
+}
+
+function selItems(){
+  return Object.keys(S.sel).map(function(id){ return {pid:id, qty:S.sel[id]}; });
+}
+
+function renderBar(){
+  var items=selItems(), n=items.length, tot=0;
+  items.forEach(function(it){ tot+=it.qty; });
+  var sum=$('sum'); sum.innerHTML='';
+  sum.appendChild(el('b',null,n+'品目'));
+  sum.appendChild(document.createTextNode(n ? (S.type==='棚卸し' ? '数えた数' : '合計 '+tot+'個') : '未選択'));
+  $('go').disabled = !n;
+  $('go').textContent = S.type+'を記録';
 }
 
 var overOk=false;
-function confirmOver(){
-  if (overOk){ overOk=false; return true; }
-  overOk=true;
-  showErr('記録上の在庫（'+stockAt(S.loc)+'）より多い数です。正しければもう一度「記録する」を押してください。');
-  return false;
-}
-
 function submit(){
   showErr('');
-  var p=prod();
-  var qty=parseInt($('qty').value,10);
-  if (!p) return showErr('製品を選んでください');
-  if (!$('selStaff').value) return showErr('記録する人（名前）を選んでください');
-  if (isNaN(qty) || qty<0) return showErr('数量を入力してください');
-  if (S.type!=='棚卸し' && qty===0) return showErr('数量を1以上にしてください');
-  if (S.type==='移動' && !S.dest) return showErr('移動先を選んでください');
-  if (S.type==='持ち出し' && qty>stockAt(S.loc) && !confirmOver()) return;
+  var items=selItems();
+  if (!$('selStaff').value){ showErr('記録する人（名前）を選んでください'); return; }
+  if (!items.length){ showErr('製品を選んでください'); return; }
+  if (S.type==='移動' && !S.dest){ showErr('移動先を選んでください'); return; }
+  if (S.type!=='棚卸し' && items.some(function(it){ return it.qty<1; })){ showErr('数量を1以上にしてください'); return; }
+  if (S.type==='持ち出し' || S.type==='移動'){
+    var over=items.filter(function(it){ return it.qty>stockAt(it.pid,S.loc); });
+    if (over.length && !overOk){
+      overOk=true;
+      showErr('記録上の在庫より多い製品があります（'+over.map(function(it){ return prodById(it.pid).name; }).join('、')+'）。正しければもう一度「記録」を押してください。');
+      return;
+    }
+  }
+  overOk=false;
   var go=$('go'); go.disabled=true; go.textContent='送信中…';
-  var rec={pid:S.pid, loc:S.loc, type:S.type, dest:S.dest, qty:qty, staff:$('selStaff').value, memo:$('memo').value};
-  api('submit', {rec:rec}).then(function(res){
-    go.disabled=false;
-    D.stock[S.pid]=res.stock; S.lastId=res.id;
-    $('doneMsg').textContent=p.name+'　'+S.loc+(S.type==='移動'?' → '+S.dest:'')+'　'+S.type+' '+qty+p.unit;
-    $('dLoc').textContent=stockAt(S.loc); $('dAll').textContent=res.total;
+  var batch={type:S.type, loc:S.loc, dest:S.dest, staff:$('selStaff').value, memo:$('memo').value, items:items};
+  api('submitBatch', {batch:batch}).then(function(res){
+    res.results.forEach(function(r){ D.stock[r.pid]=r.stock; });
+    var u=usage(); items.forEach(function(it){ u[it.pid]=(u[it.pid]||0)+1; }); store(usageKey(), JSON.stringify(u));
+    S.lastId=res.id; S.lastItems=items;
+    $('doneSub').textContent=S.loc+(S.type==='移動'?' → '+S.dest:'')+'　'+S.type+'　'+items.length+'品目';
+    var ul=$('doneList'); ul.innerHTML='';
+    items.forEach(function(it){
+      var p=prodById(it.pid), li=el('li');
+      li.appendChild(el('span',null,p.name+'　'+(S.type==='棚卸し'?'数えた数 ':'')+it.qty+p.unit));
+      li.appendChild(el('span',null,'残り '+stockAt(it.pid,S.loc)+p.unit));
+      ul.appendChild(li);
+    });
     $('memo').value='';
-    show('form', false); show('doneView', true); $('undo').disabled=false;
-    window.scrollTo(0,0);
-  }).catch(function(e){ go.disabled=false; render(); showErr('記録できませんでした：'+e.message); });
+    show('rec', false); show('bar', false); show('done', true);
+    $('undo').disabled=false; $('undo').textContent='間違えたので取り消す';
+    renderBar(); window.scrollTo(0,0);
+  }).catch(function(e){ showErr('記録できませんでした：'+e.message); renderBar(); });
 }
 
 function undo(){
   if (!S.lastId) return;
   var b=$('undo'); b.disabled=true; b.textContent='取り消し中…';
   api('undo', {id:S.lastId}).then(function(res){
-    D.stock[S.pid]=res.stock; S.lastId=null;
-    b.textContent='間違えたので取り消す';
-    show('doneView', false); show('form', true);
-    render(); toast('取り消しました'); window.scrollTo(0,0);
+    for (var pid in (res.stocks||{})) D.stock[pid]=res.stocks[pid];
+    var u=usage(); (S.lastItems||[]).forEach(function(it){ if (u[it.pid]) u[it.pid]--; }); store(usageKey(), JSON.stringify(u));
+    S.lastId=null;
+    // 取り消した内容を選んだ状態に戻す（直して送り直せるように）
+    S.sel={}; (S.lastItems||[]).forEach(function(it){ S.sel[it.pid]=it.qty; });
+    show('done', false); show('rec', true); renderAll();
+    toast('取り消しました。内容を直して送り直せます'); window.scrollTo(0,0);
   }).catch(function(e){ b.disabled=false; b.textContent='間違えたので取り消す'; showErr('取り消せませんでした：'+e.message); });
 }
 
-$('keyGo').onclick=function(){ var v=$('keyIn').value.trim(); if(!v) return; store('inv_key', v); boot(); };
-$('retry').onclick=boot;
-/* ===== QRラベル印刷モード（URLの末尾に ?mode=labels） ===== */
+/* =============================== 在庫一覧（閲覧：?mode=stock） =============================== */
+var V={q:'', cat:'', loc:''};
+function stockView(){
+  show('stock', true);
+  var l=Q.get('l')||'';
+  V.loc = /^\d+$/.test(l) ? (D.locations[Number(l)-1]||'') : '';
+  var sl=$('sloc'); sl.innerHTML='';
+  var o=el('option',null,'すべての保管場所'); o.value=''; sl.appendChild(o);
+  D.locations.forEach(function(x){ var y=el('option',null,x); y.value=x; sl.appendChild(y); });
+  sl.value=V.loc;
+  var setRecLink=function(){ $('toRec').href = linkTo(V.loc ? {l:locNo(V.loc)} : {}); };
+  setRecLink();
+  sl.onchange=function(){ V.loc=sl.value; setRecLink(); renderStock(); };
+  $('sq').oninput=function(){ V.q=this.value.trim().toLowerCase(); renderStock(); };
+  var d=D.loadedAt; $('supd').textContent='読み込み時点 '+d.getHours()+':'+('0'+d.getMinutes()).slice(-2)+'（最新にするにはページを再読み込み）';
+  renderStockCats(); renderStock();
+}
+function renderStockCats(){
+  var box=$('scats'); box.innerHTML='';
+  var cats=(D.categories||[]).filter(function(c){ return D.products.some(function(p){ return p.category===c; }); });
+  [''].concat(cats).forEach(function(c){
+    var b=el('button', V.cat===c?'on':'', c||'すべて'); b.type='button';
+    b.onclick=function(){ V.cat=c; renderStockCats(); renderStock(); };
+    box.appendChild(b);
+  });
+}
+function renderStock(){
+  var box=$('slist'); box.innerHTML='';
+  var list=sortProducts(D.products.filter(function(p){
+    if (V.cat && p.category!==V.cat) return false;
+    if (V.loc && p.places.indexOf(V.loc)<0) return false;
+    if (V.q && p.name.toLowerCase().indexOf(V.q)<0) return false;
+    return true;
+  }));
+  if (!list.length){ box.appendChild(el('div','empty','該当する製品がありません')); return; }
+  list.forEach(function(p){
+    var c=el('div','sc'), h=el('div','h'), left=el('div');
+    left.appendChild(el('b',null,p.name)); left.appendChild(document.createElement('br'));
+    if (p.category) left.appendChild(el('span','tag',p.category));
+    var tot=el('div','tot');
+    tot.appendChild(el('b',null,String(V.loc ? stockAt(p.id,V.loc) : stockAll(p.id))));
+    tot.appendChild(document.createTextNode(' '+p.unit));
+    tot.appendChild(el('div','hint', V.loc ? 'この場所' : '合計'));
+    h.appendChild(left); h.appendChild(tot); c.appendChild(h);
+    var locs=el('div','locs');
+    p.places.forEach(function(l){
+      var n=stockAt(p.id,l);
+      locs.appendChild(el('span', (l===V.loc?'hl':'')+(n?'':' zero'), l+' '+n));
+    });
+    c.appendChild(locs);
+    box.appendChild(c);
+  });
+}
+
+/* =============================== QRラベル印刷（?mode=labels） =============================== */
 function labels(){
   document.body.classList.add('lab');
-  document.querySelector('.wrap').style.maxWidth='none';
+  $('wrap').style.maxWidth='none'; $('wrap').style.padding='0';
   var box=$('labels'); box.classList.remove('hide'); box.innerHTML='';
-  var bar=document.createElement('div'); bar.className='lbar'; box.appendChild(bar);
-  var sel=document.createElement('select'); opt(sel,'','すべての場所'); D.locations.forEach(function(l){ opt(sel,l,l); });
-  bar.appendChild(sel);
-  var pb=document.createElement('button'); pb.textContent='印刷する'; pb.onclick=function(){ window.print(); }; bar.appendChild(pb);
-  var nt=document.createElement('span'); nt.className='note'; nt.textContent='切り取って各保管場所の棚に貼ってください（A4・3列）'; bar.appendChild(nt);
-  var area=document.createElement('div'); box.appendChild(area);
+  var bar=el('div','lbar'); box.appendChild(bar);
+  var pb=el('button',null,'印刷する'); pb.onclick=function(){ window.print(); }; bar.appendChild(pb);
+  bar.appendChild(el('span','note','保管場所ごとに1枚。切り取って各保管場所の目立つ所に貼ってください（A4・1枚に2か所分）'));
+  var area=el('div'); box.appendChild(area);
   var base=location.origin+location.pathname;
   function draw(){
-    area.innerHTML='';
-    var sheet=document.createElement('div'); sheet.className='sheet'; area.appendChild(sheet);
-    var n=0;
+    var sheet=el('div','sheet'); area.appendChild(sheet);
     D.locations.forEach(function(loc, li){
-      if (sel.value && sel.value!==loc) return;
-      D.products.forEach(function(p){
-        if (p.places.indexOf(loc)<0) return;
-        n++;
-        var d=document.createElement('div'); d.className='lab1';
-        var nm=document.createElement('div'); nm.className='nm'; nm.textContent=p.name;
-        var qr=document.createElement('div'); qr.className='qr';
-        var lc=document.createElement('div'); lc.className='loc'; lc.textContent='📍 '+loc;
-        var pt=document.createElement('div'); pt.className='pt'; pt.textContent=(p.point!==''&&p.point!=null?'発注点 '+p.point+p.unit+'　':'')+p.id;
-        d.appendChild(nm); d.appendChild(qr); d.appendChild(lc); d.appendChild(pt); sheet.appendChild(d);
-        new QRCode(qr,{text:base+'?p='+encodeURIComponent(p.id)+'&l='+(li+1),width:256,height:256,correctLevel:QRCode.CorrectLevel.M});
-      });
+      var d=el('div','lab1');
+      d.appendChild(el('div','t','在庫の記録はこちら'));
+      d.appendChild(el('div','loc',loc));
+      var qr=el('div','qr'); d.appendChild(qr);
+      d.appendChild(el('div','pt','スマホのカメラで読み取り → 製品をタップ → 記録\n（場所番号 '+(li+1)+'）'));
+      sheet.appendChild(d);
+      new QRCode(qr,{text:base+'?l='+(li+1),width:512,height:512,correctLevel:QRCode.CorrectLevel.M});
     });
-    if (!n) area.innerHTML='<div class="center">ラベルにする製品がありません。製品マスタの「置き場所」を確認してください。</div>';
   }
-  sel.onchange=draw;
   var sc=document.createElement('script');
   sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
   sc.onload=draw;
@@ -342,6 +535,8 @@ function labels(){
   document.head.appendChild(sc);
 }
 
+$('keyGo').onclick=function(){ var v=$('keyIn').value.trim(); if(!v) return; store('inv_key', v); boot(); };
+$('retry').onclick=boot;
 boot();
 </script>
 </body>
